@@ -16,7 +16,7 @@ module TradeItem
             self.owned_items.delete(item)
         end
         
-        def active_owned_items
+        def items_to_sell
             a = Array.new
             self.owned_items.each {|item| 
                 if item.active

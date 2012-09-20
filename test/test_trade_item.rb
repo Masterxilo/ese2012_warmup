@@ -1,8 +1,8 @@
 require 'test/unit'
-require 'app/trade_item/user'
-require 'app/trade_item/item'
+require '../app/trade_item/user' # file must be run from within its folder!!!
+require '../app/trade_item/item'
 
-class TradeItemTest < Test::Unit::TestCase
+class TestTradeItem < Test::Unit::TestCase
     def test_user_name
         # Users have a name
         user = TradeItem::User.named('John')
@@ -39,6 +39,7 @@ class TradeItemTest < Test::Unit::TestCase
         # An item can be active or inactive.
         user = TradeItem::User.named('John')
         item = TradeItem::Item.named_priced_owned('GameBoy', 230,user)
+        assert(!item.active, 'Item active state missing or wrong, should be false')
         item.active = false
         assert(!item.active, 'Item active state missing or wrong, should be false')
         assert(item.to_s.include?('is inactive'), 
@@ -53,7 +54,6 @@ class TradeItemTest < Test::Unit::TestCase
         # An item has an owner.
         user = TradeItem::User.named('John')
         item = TradeItem::Item.named_priced_owned('GameBoy', 230,user)
-        item.active = false
         assert(item.to_s.include?('owned by John'), 'Item has no owner')
     end
     
@@ -67,14 +67,18 @@ class TradeItemTest < Test::Unit::TestCase
         assert(!item.active, 'Item active state missing or wrong, should be false')
     end
     
-        # ====================
+    # ====================
     # Need to provide 3 tests for *second to last* requirement.
-    # A user can buy active items of another user (inactive items can't be bought). When a user buys an item, it becomes the owner; credit are transferred accordingly; immediately after the trade, the item is inactive. The transaction fails if the buyer has !enough credits.
+    # A user can buy active items of another user (inactive items can't be bought).
+    # When a user buys an item, it becomes the owner; credit are transferred accordingly;
+    # immediately after the trade, the item is inactive. The transaction fails if the buyer has !enough credits.
     def test_buy_active
         user1 = TradeItem::User.named('John')
         user2 = TradeItem::User.named('Tim')
         item = TradeItem::Item.named_priced_owned('GameBoy', 80,user1)
         item.active = true
+        assert(item.owner == user1, 'Item owner wrong before trade')
+
         assert(item.buy?(user2), "Buying failed when it shouldn't")
         assert(user1.to_s.include?(' owns 0 items'), 'Item still owned by old owner')
         assert(user1.credits == 180, 'User1 did !get credits')
@@ -109,8 +113,10 @@ class TradeItemTest < Test::Unit::TestCase
         item3 = TradeItem::Item.named_priced_owned('GBC', 250,user)
         item1.active = true
         item3.active = true
-    
-        l = user.active_owned_items
+
+        assert(user.owned_items.length == 3, 'Wrong amount of items')
+
+        l = user.items_to_sell
         
         assert(l.include?(item1), 'Active item !in list')
         assert(!l.include?(item2), 'Inactive item in list')

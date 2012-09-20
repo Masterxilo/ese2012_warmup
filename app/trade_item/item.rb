@@ -11,9 +11,9 @@ module TradeItem
             item
         end
         
-        #buy if possible
+        #buy if possible (not possible if inactive, not enough credits or buyer = owner)
         def buy?(buyer)
-            if buyer.credits < self.price or not self.active
+            if buyer.credits < self.price or not self.active or buyer == self.owner
                 false
                 return
             end
