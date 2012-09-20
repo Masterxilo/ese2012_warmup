@@ -1,3 +1,4 @@
+# author: Paul Frischknecht, #11-110-814
 module TradeItem
     class Item
         attr_accessor :name, :price, :active, :owner

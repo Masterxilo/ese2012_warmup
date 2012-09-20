@@ -1,3 +1,4 @@
+# author: Paul Frischknecht, #11-110-814
 require 'test/unit'
 require '../app/trade_item/user' # file must be run from within its folder!!!
 require '../app/trade_item/item'

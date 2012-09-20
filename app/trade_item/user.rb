@@ -1,3 +1,4 @@
+# author: Paul Frischknecht, #11-110-814
 module TradeItem
     class User
         attr_accessor :name, :credits, :owned_items
