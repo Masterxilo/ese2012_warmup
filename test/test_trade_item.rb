@@ -1,7 +1,18 @@
 # author: Paul Frischknecht, #11-110-814
 require 'test/unit'
-require '../app/trade_item/user' # file must be run from within its folder!!!
-require '../app/trade_item/item'
+#require '../app/trade_item/user' # file must be run from within its folder!!!
+#require '../app/trade_item/item'
+
+# AK I can't say I found a satisfactory way to solve the relative import thing, but I found
+
+def relative path
+				File.join(File.dirname(__FILE__), path)
+end
+
+require relative('../app/trade_item/user')
+require relative('../app/trade_item/item')
+
+# to be working.
 
 class TestTradeItem < Test::Unit::TestCase
     def test_user_name
@@ -41,6 +52,11 @@ class TestTradeItem < Test::Unit::TestCase
         user = TradeItem::User.named('John')
         item = TradeItem::Item.named_priced_owned('GameBoy', 230,user)
         assert(!item.active, 'Item active state missing or wrong, should be false')
+
+				# The lazy way to test this is:
+				assert(item.respond_to? :active, "Item has no activity state")
+				assert(item.respond_to? :active=, "Item can't set activity state")
+				# </lazy>
         item.active = false
         assert(!item.active, 'Item active state missing or wrong, should be false')
         assert(item.to_s.include?('is inactive'), 
